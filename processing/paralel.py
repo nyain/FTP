@@ -1,9 +1,10 @@
 import threading
 import xmlrpc.client
 import os
+import time
 
 LISTEN_PORT = 80
-LISTEN_HOST = "4952-111-95-183-172.ngrok.io"
+LISTEN_HOST = "localhost"
 
 proxy = xmlrpc.client.ServerProxy(f'http://{LISTEN_HOST}:{LISTEN_PORT}')
 lock = threading.Lock()
@@ -17,6 +18,7 @@ class Downloads(threading.Thread):
     def run(self):
         if os.path.exists(f'downloaded/{self.file}'):
             print("File already exist !!")
+            time.sleep(0.5)
         else:
             # Write file dari server ke direktori downloaded
             with lock:
@@ -33,11 +35,13 @@ class Uploads(threading.Thread):
     def run(self):
         if os.path.exists(f'storage/{self.file}'):
             print("File already exist !!")
+            time.sleep(0.5)
         else:
-            # Write file dar client ke direktori storage
+            # Write file dari client ke direktori storage
             with lock:
                 with open(self.file, 'rb') as data:
                     raw_data = xmlrpc.client.Binary(data.read())
                     is_uploaded = proxy.upload(raw_data, self.file, self.username)
                     if not is_uploaded:
                         print("File already exists !!")
+                        time.sleep(0.5)

@@ -1,11 +1,11 @@
-from xmlrpc.server import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
+from xmlrpc.server import SimpleXMLRPCServer
 from tabulate import tabulate
 
 import xmlrpc.client
 import os
 import pymysql
 
-LISTEN_PORT = 80
+LISTEN_PORT = 8080
 LISTEN_HOST = "127.0.0.1"
 
 connection = pymysql.connect(db="ftp", user="root", password="")
@@ -60,7 +60,7 @@ def upload(file_data, filename, username):
         print('Error: File already exists')
         return False
 
-def show_al_files():
+def show_all_files():
     files = ','.join(os.listdir('storage')).encode()
     return xmlrpc.client.Binary(bytes(files))
 
@@ -79,11 +79,11 @@ server = SimpleXMLRPCServer((LISTEN_HOST, LISTEN_PORT))
 # Register function to RPC
 server.register_function(download, 'download')
 server.register_function(upload, 'upload')
-server.register_function(show_al_files, 'show_all_files')
+server.register_function(show_all_files, 'show_all_files')
 server.register_function(login, 'login')
 server.register_function(clients_activity, 'clients_activity')
 
-def run():
+def loop():
     #exception handling saat terminate menggunkan ctrl+c
     try:
         while True:
@@ -93,4 +93,4 @@ def run():
         pass
 
 print(f"Listen on {LISTEN_HOST}:{LISTEN_PORT}")
-run()
+loop()
