@@ -5,7 +5,7 @@ import os
 import time
 
 LISTEN_PORT = 80
-LISTEN_HOST = "4952-111-95-183-172.ngrok.io"
+LISTEN_HOST = "9838-111-95-183-172.ngrok.io"
 
 proxy = xmlrpc.client.ServerProxy(f'http://{LISTEN_HOST}:{LISTEN_PORT}')
 
@@ -16,6 +16,8 @@ def download(username):
     file_array = []
     is_finished = False
 
+    if not os.path.exists(os.getcwd() + '/downloaded'):
+        os.mkdir('../downloaded')
     # Mengambil daftar file yang tersedia di folder storage(server)
     files = str(proxy.show_all_files()).split(',')
 
